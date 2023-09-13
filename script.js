@@ -1,87 +1,78 @@
 document.addEventListener("DOMContentLoaded", function () {
-    // Function to fetch data from data.json
+    const desktopTable = document.querySelector("#desktop-savings-table tbody");
+    const mobileTableRows = document.querySelector("#mobile-table-rows");
+    const prevButton = document.querySelector("#prev-button");
+    const nextButton = document.querySelector("#next-button");
+    let currentIndex = 0; // Initialize the index
+
+    fetchData();
+
     function fetchData() {
         fetch("data.json")
             .then((response) => response.json())
             .then((data) => {
-                populateTables(data); // Populate the desktop table
-                populateMobileTable(data); // Populate the mobile table
+                populateTables(data);
+                populateMobileTable(data);
             })
             .catch((error) => {
                 console.error("Error fetching data:", error);
             });
     }
 
-    // Function to populate the desktop table
     function populateTables(data) {
-        const desktopTable = document.querySelector("#desktop-savings-table tbody");
-
         desktopTable.innerHTML = "";
-
         data.products.forEach(product => {
-            const row = document.createElement("tr");
-            row.innerHTML = `
-                <td>${product.productName}</td>
-                <td>${product.interestRate}</td>
-                <td>${product.minimumDeposit}</td>
-                <td>${product.interestType}</td>
-            `;
-
+            const row = createTableRow(product);
             desktopTable.appendChild(row);
         });
     }
 
-   // Function to populate the mobile table
-   function populateMobileTable(data) {
-    const mobileTableRows = document.querySelector("#mobile-table-rows");
+    function populateMobileTable(data) {
+        mobileTableRows.innerHTML = "";
+        displayItem(currentIndex, data);
 
-    mobileTableRows.innerHTML = "";
-
-    let currentIndex = 0; // Initialize the index
-
-    function displayItem(index) {
-        const product = data.products[index];
-        if (product) {
-            const row = document.createElement("div");
-            row.innerHTML = `
-                <div><strong>${product.productName}</strong></div>
-                <div><strong>Interest Rate:</strong> ${product.interestRate}</div>
-                <div><strong>Minimum Deposit:</strong> ${product.minimumDeposit}</div>
-                <div><strong>Interest Type:</strong> ${product.interestType}</div>
-            `;
-            mobileTableRows.appendChild(row);
-        }
+        prevButton.addEventListener("click", () => navigate(-1, data));
+        nextButton.addEventListener("click", () => navigate(1, data));
     }
 
-    displayItem(currentIndex);
+    function createTableRow(product) {
+        const row = document.createElement("tr");
+        const columns = ["productName", "interestRate", "minimumDeposit", "interestType"];
+        columns.forEach(columnName => {
+            const cell = document.createElement("td");
+            cell.textContent = product[columnName];
+            row.appendChild(cell);
+        });
+        return row;
+    }
 
-    prevButton.disabled = currentIndex === 0;
-    nextButton.disabled = currentIndex === data.products.length - 1;
-
-    prevButton.addEventListener("click", function () {
-        if (currentIndex > 0) {
-            currentIndex -= 1;
-            mobileTableRows.innerHTML = ""; // Clear existing content
-            displayItem(currentIndex);
-            prevButton.disabled = currentIndex === 0;
-            nextButton.disabled = currentIndex === data.products.length - 1;
+    function displayItem(index, data) {
+        const product = data.products[index];
+        if (product) {
+            const row = createMobileTableRow(product);
+            mobileTableRows.appendChild(row);
         }
-    });
+        prevButton.disabled = index === 0;
+        nextButton.disabled = index === data.products.length - 1;
+    }
 
-    nextButton.addEventListener("click", function () {
-        if (currentIndex < data.products.length - 1) {
-            currentIndex += 1;
-            mobileTableRows.innerHTML = ""; // Clear existing content
-            displayItem(currentIndex);
-            prevButton.disabled = currentIndex === 0;
-            nextButton.disabled = currentIndex === data.products.length - 1;
+    function createMobileTableRow(product) {
+        const row = document.createElement("div");
+        row.innerHTML = `
+            <div><strong>${product.productName}</strong></div>
+            <div><strong>Interest Rate:</strong> ${product.interestRate}</div>
+            <div><strong>Minimum Deposit:</strong> ${product.minimumDeposit}</div>
+            <div><strong>Interest Type:</strong> ${product.interestType}</div>
+        `;
+        return row;
+    }
+
+    function navigate(offset, data) {
+        const newIndex = currentIndex + offset;
+        if (newIndex >= 0 && newIndex < data.products.length) {
+            currentIndex = newIndex;
+            mobileTableRows.innerHTML = "";
+            displayItem(currentIndex, data);
         }
-    });
-}
-
-const prevButton = document.querySelector("#prev-button");
-const nextButton = document.querySelector("#next-button");
-
-
-    fetchData();
+    }
 });
