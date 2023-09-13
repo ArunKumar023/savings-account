@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Savings Account</title>
+</head>
+<body>
+    <header>
+        <h1>Savings Accounts</h1>
+    </header>
+    <!-- Desktop View -->
+<table id="desktop-savings-table">
+    <thead>
+        <tr>
+            <th>Product Name</th>
+            <th>Interest Rate</th>
+            <th>Minimum Deposit</th>
+            <th>Interest Type</th>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
+<!-- Mobile View -->
+<div id="mobile-savings-table" class="hidden-on-desktop">
+    <div id="mobile-table-rows" class="mobile-table-row">
+        <!-- Data will be dynamically added here -->
+    </div>
+</div>
+
+<div id="nav-buttons" class="hidden-on-desktop">
+    <button id="prev-button">Previous</button>
+    <button id="next-button">Next</button>
+</div>
+
+    <script src="script.js"></script>
+</body>
+</html>
